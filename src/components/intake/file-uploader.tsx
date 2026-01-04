@@ -9,7 +9,10 @@ interface FileUploaderProps {
     onFileSelect: (file: File) => void
 }
 
+import { useLanguage } from "@/components/language-provider"
+
 export function FileUploader({ onFileSelect }: FileUploaderProps) {
+    const { t } = useLanguage()
     const [dragActive, setDragActive] = React.useState(false)
     const [selectedFile, setSelectedFile] = React.useState<File | null>(null)
     const inputRef = React.useRef<HTMLInputElement>(null)
@@ -91,10 +94,10 @@ export function FileUploader({ onFileSelect }: FileUploaderProps) {
                             </div>
                             <div className="space-y-1">
                                 <p className="text-lg font-medium text-foreground">
-                                    Drop ECG Strip or Patient File
+                                    {t('upload.drop')}
                                 </p>
                                 <p className="text-sm text-muted-foreground">
-                                    Supports PDF, PNG, JPG (Max 50MB)
+                                    {t('upload.supports')}
                                 </p>
                             </div>
                         </motion.div>
@@ -132,7 +135,7 @@ export function FileUploader({ onFileSelect }: FileUploaderProps) {
                                 />
                             </div>
                             <div className="text-xs text-green-500 font-medium flex items-center gap-1">
-                                File Ready for Analysis
+                                {t('upload.ready')}
                             </div>
                         </motion.div>
                     )}
@@ -144,7 +147,7 @@ export function FileUploader({ onFileSelect }: FileUploaderProps) {
                         animate={{ opacity: 1 }}
                         className="absolute inset-0 bg-primary/10 backdrop-blur-[2px] flex items-center justify-center font-bold text-xl text-primary border-4 border-primary rounded-xl"
                     >
-                        DROP TO UPLOAD
+                        {t('upload.dropzone')}
                     </motion.div>
                 )}
             </div>

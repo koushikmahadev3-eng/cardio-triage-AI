@@ -72,7 +72,7 @@ export function SymptomForm({ onSubmit, isProcessing }: SymptomFormProps) {
         <Card className="w-full h-full border-none shadow-none bg-transparent">
             <CardHeader className="px-0 pt-0">
                 <CardTitle>{t('intake.form')}</CardTitle>
-                <CardDescription>Enter patient reported symptoms and vital signs. Real-time validation active.</CardDescription>
+                <CardDescription>{t('intake.desc')}</CardDescription>
             </CardHeader>
             <CardContent className="px-0">
                 <Form {...form}>
@@ -85,7 +85,7 @@ export function SymptomForm({ onSubmit, isProcessing }: SymptomFormProps) {
                                 <FormItem>
                                     <FormLabel>{t('chief.complaint')}</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="e.g. Severe retrosternal chest pain..." {...field} />
+                                        <Input placeholder={t('intake.placeholder.comp')} {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -98,9 +98,9 @@ export function SymptomForm({ onSubmit, isProcessing }: SymptomFormProps) {
                             render={() => (
                                 <FormItem>
                                     <div className="mb-4">
-                                        <FormLabel className="text-base">Associated Symptoms</FormLabel>
+                                        <FormLabel className="text-base">{t('intake.symptoms.label')}</FormLabel>
                                         <FormDescription>
-                                            Select all that apply.
+                                            {t('intake.symptoms.desc')}
                                         </FormDescription>
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
@@ -130,7 +130,7 @@ export function SymptomForm({ onSubmit, isProcessing }: SymptomFormProps) {
                                                                 />
                                                             </FormControl>
                                                             <FormLabel className="font-normal">
-                                                                {symptom}
+                                                                {t(`symptom.${symptom}`)}
                                                             </FormLabel>
                                                         </FormItem>
                                                     )
@@ -149,7 +149,7 @@ export function SymptomForm({ onSubmit, isProcessing }: SymptomFormProps) {
                                 name="hr"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Heart Rate</FormLabel>
+                                        <FormLabel>{t('intake.hr')}</FormLabel>
                                         <FormControl>
                                             <div className="relative">
                                                 <Input type="number" placeholder="--" {...field} className="pr-8" />
@@ -165,7 +165,7 @@ export function SymptomForm({ onSubmit, isProcessing }: SymptomFormProps) {
                                 name="bp"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>BP</FormLabel>
+                                        <FormLabel>{t('intake.bp')}</FormLabel>
                                         <FormControl>
                                             <div className="relative">
                                                 <Input placeholder="120/80" {...field} className="pr-8" />
@@ -181,7 +181,7 @@ export function SymptomForm({ onSubmit, isProcessing }: SymptomFormProps) {
                                 name="spo2"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>SpO2</FormLabel>
+                                        <FormLabel>{t('intake.spo2')}</FormLabel>
                                         <FormControl>
                                             <div className="relative">
                                                 <Input type="number" placeholder="--" {...field} className="pr-8" />
@@ -198,7 +198,7 @@ export function SymptomForm({ onSubmit, isProcessing }: SymptomFormProps) {
                             {isProcessing ? (
                                 <>
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    Analyzing Vitals...
+                                    {t('intake.analyzing')}
                                 </>
                             ) : (
                                 t('run.analysis')

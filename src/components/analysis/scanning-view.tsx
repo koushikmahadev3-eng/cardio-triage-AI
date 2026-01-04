@@ -4,14 +4,17 @@ import * as React from "react"
 import { motion } from "framer-motion"
 import { Activity, BrainCircuit, HeartPulse, ScanLine } from "lucide-react"
 
+import { useLanguage } from "@/components/language-provider"
+
 export function ScanningView() {
+    const { t } = useLanguage()
     const [step, setStep] = React.useState(0)
 
     const steps = [
-        "Digitizing ECG Waveform...",
-        "Analyzing ST Segments...",
-        "Correlating Clinical Symptoms...",
-        "Calculating Triage Priority..."
+        t('scan.step1'),
+        t('scan.step2'),
+        t('scan.step3'),
+        t('scan.step4')
     ]
 
     React.useEffect(() => {
@@ -60,7 +63,7 @@ export function ScanningView() {
                 <div className="space-y-2 text-center">
                     <h2 className="text-2xl font-bold tracking-widest uppercase flex items-center gap-2">
                         <ScanLine className="h-6 w-6 animate-pulse text-primary" />
-                        AI Analysis Active
+                        {t('scan.title')}
                     </h2>
                     <div className="h-6 overflow-hidden">
                         <AnimatePresence mode="wait">

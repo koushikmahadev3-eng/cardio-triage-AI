@@ -36,7 +36,7 @@ export function Sidebar() {
                 </div>
                 <div className="flex items-center justify-between text-[10px] font-mono text-muted-foreground uppercase">
                     <span>
-                        Status: <span className={isConnected ? "text-green-500" : "text-red-500"}>
+                        {t('sidebar.status')}: <span className={isConnected ? "text-green-500" : "text-red-500"}>
                             {isConnected ? t('status.online') : t('status.offline')}
                         </span>
                     </span>

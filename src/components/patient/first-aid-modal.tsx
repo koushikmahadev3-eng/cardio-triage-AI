@@ -9,7 +9,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { HeartPulse, Phone, AlertTriangle, Pill } from "lucide-react"
+import { HeartPulse, Phone, AlertTriangle, Pill, Activity } from "lucide-react"
 import { useLanguage } from "@/components/language-provider"
 
 export function FirstAidModal() {
@@ -58,21 +58,50 @@ export function FirstAidModal() {
                     </div>
 
                     {/* Protocol 2: CPR */}
+                    {/* Protocol 2: CPR */}
                     <div className="space-y-3 p-4 rounded-lg bg-yellow-50 dark:bg-yellow-500/10 border border-yellow-100 dark:border-yellow-500/20">
                         <h4 className="font-bold text-yellow-700 dark:text-yellow-400 flex items-center gap-2">
-                            <ActivityIcon />
+                            <Activity className="h-4 w-4" />
                             {t('guide.cpr')}
                         </h4>
-                        <ul className="space-y-2 text-sm text-foreground/90">
-                            <li className="flex items-start gap-2">
-                                <span className="font-bold text-red-500">!</span>
-                                <span className="font-semibold">{t('guide.action.cpr')}</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                                <span className="font-bold text-blue-500">⚡</span>
-                                <span>{t('guide.action.aed')}</span>
-                            </li>
-                        </ul>
+                        <div className="space-y-3 px-1">
+                            {/* Step 1 */}
+                            <div className="flex gap-3 text-sm">
+                                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-100 text-xs font-bold text-red-600 dark:bg-red-900/50 dark:text-red-400">1</div>
+                                <p className="font-medium text-foreground/90 pt-0.5">{t('guide.cpr.step1')}</p>
+                            </div>
+                            {/* Step 2 */}
+                            <div className="flex gap-3 text-sm">
+                                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-100 text-xs font-bold text-red-600 dark:bg-red-900/50 dark:text-red-400">2</div>
+                                <p className="font-medium text-foreground/90 pt-0.5">{t('guide.cpr.step2')}</p>
+                            </div>
+                            {/* Step 3 */}
+                            <div className="flex gap-3 text-sm">
+                                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-100 text-xs font-bold text-red-600 dark:bg-red-900/50 dark:text-red-400">3</div>
+                                <p className="font-medium text-foreground/90 pt-0.5">{t('guide.cpr.step3')}</p>
+                            </div>
+                            {/* Step 4 */}
+                            <div className="flex gap-3 text-sm">
+                                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-100 text-xs font-bold text-red-600 dark:bg-red-900/50 dark:text-red-400">4</div>
+                                <p className="font-medium text-foreground/90 pt-0.5">{t('guide.cpr.step4')}</p>
+                            </div>
+                            {/* Step 5 */}
+                            <div className="flex gap-3 text-sm">
+                                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-100 text-xs font-bold text-red-600 dark:bg-red-900/50 dark:text-red-400">5</div>
+                                <p className="font-medium text-foreground/90 pt-0.5">{t('guide.cpr.step5')}</p>
+                            </div>
+
+                            <div className="border-t border-yellow-200 dark:border-yellow-900 pt-2 mt-2 space-y-2">
+                                <div className="flex gap-2 text-sm items-center">
+                                    <span className="font-bold text-red-500 pl-1">!</span>
+                                    <span className="text-muted-foreground italic text-xs">{t('guide.cpr.continue')}</span>
+                                </div>
+                                <div className="flex gap-2 text-sm items-center">
+                                    <span className="font-bold text-blue-500 pl-1">⚡</span>
+                                    <span className="font-medium">{t('guide.action.aed')}</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </DialogContent>
@@ -80,21 +109,4 @@ export function FirstAidModal() {
     )
 }
 
-function ActivityIcon() {
-    return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="lucide lucide-activity"
-        >
-            <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-        </svg>
-    )
-}
+

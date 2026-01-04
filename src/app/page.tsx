@@ -5,12 +5,15 @@ import { Sidebar } from "@/components/sidebar"
 import { ModeToggle } from "@/components/mode-toggle"
 import { LanguageToggle } from "@/components/language-toggle"
 import { FileUploader } from "@/components/intake/file-uploader"
+import { useLanguage } from "@/components/language-provider"
 import { SymptomForm } from "@/components/intake/symptom-form"
 import { ScanningView } from "@/components/analysis/scanning-view"
 import { TriageDashboard } from "@/components/dashboard/triage-dashboard"
 import { FirstAidModal } from "@/components/patient/first-aid-modal"
+import { HealthyHeartModal } from "@/components/patient/healthy-heart-modal"
 
 export default function Home() {
+  const { t } = useLanguage()
   const [view, setView] = React.useState<'intake' | 'analysis' | 'results'>('intake')
 
   const handleIntakeSubmit = () => {
@@ -28,11 +31,12 @@ export default function Home() {
         <header className="h-14 border-b px-6 flex items-center justify-between bg-muted/20 backdrop-blur sticky top-0 z-10">
           <h1 className="font-semibold text-lg flex items-center gap-2">
             <span className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
-            Mission Control
+            {t('header.mission')}
           </h1>
           <div className="flex items-center gap-4">
+            <HealthyHeartModal />
             <FirstAidModal />
-            <div className="text-xs text-muted-foreground font-mono">ID: DOC-8821</div>
+            <div className="text-xs text-muted-foreground font-mono">{t('header.id')}: DOC-8821</div>
             <LanguageToggle />
             <ModeToggle />
           </div>
