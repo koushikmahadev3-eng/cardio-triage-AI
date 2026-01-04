@@ -28,6 +28,11 @@ CardioTriage AI is a life-critical application designed to assist medical profes
 - **Visual Evidence**: Interactive ECG waveform rendering using `Recharts`.
 - **Actionable Insights**: Generated handover notes and immediate action buttons (e.g., "Page Cardiologist").
 
+### 5. Advanced Capabilities
+- **Wearable Integration**: Ingests data from smartwatches (Apple/Fitbit) for pre-arrival risk assessment.
+- **Multilingual Support**: Interface available in English, Hindi, and Kannada for localized care.
+- **Role-Based Access**: Secure views for Nurses (Intake) vs Doctors (Diagnosis).
+
 ## 🛠️ Tech Stack
 - **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
@@ -39,8 +44,10 @@ CardioTriage AI is a life-critical application designed to assist medical profes
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js 18+
-- npm
+- **Node.js 18+** (Runtime Environment)
+- **Python 3.10+** (For Backend / Analysis Engine)
+- **Git** (Version Control)
+- **VS Code** (Recommended Editor)
 
 ### Installation
 

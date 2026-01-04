@@ -7,11 +7,13 @@ import { Activity, AlertCircle, CheckCircle2, Siren, User, Wifi, Loader2 } from 
 import type { Patient } from "@/lib/mock-data"
 import { cn } from "@/lib/utils"
 import useSWR from 'swr'
+import { useLanguage } from "@/components/language-provider"
 
 // Fetcher for SWR
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 export function Sidebar() {
+    const { t } = useLanguage()
     // SWR Hook for real-time updates
     const { data: patients, error, isLoading } = useSWR<Patient[]>('/api/patients', fetcher, {
         refreshInterval: 3000, // Poll every 3 seconds for "Live" feel
@@ -30,12 +32,12 @@ export function Sidebar() {
                     ) : (
                         <Wifi className="h-5 w-5 text-muted-foreground" />
                     )}
-                    <h2 className="font-bold text-lg tracking-tight text-sidebar-foreground">CardioTriage AI</h2>
+                    <h2 className="font-bold text-lg tracking-tight text-sidebar-foreground">{t('app.title')}</h2>
                 </div>
                 <div className="flex items-center justify-between text-[10px] font-mono text-muted-foreground uppercase">
                     <span>
                         Status: <span className={isConnected ? "text-green-500" : "text-red-500"}>
-                            {isConnected ? "ONLINE" : "OFFLINE"}
+                            {isConnected ? t('status.online') : t('status.offline')}
                         </span>
                     </span>
                     <span>{patients?.length || 0} Cases</span>
@@ -44,7 +46,7 @@ export function Sidebar() {
 
             <div className="p-3 border-b border-sidebar-border bg-sidebar-accent/10">
                 <h3 className="text-xs font-semibold text-sidebar-foreground uppercase tracking-wider">
-                    Live Emergency Feed
+                    {t('live.feed')}
                 </h3>
             </div>
 

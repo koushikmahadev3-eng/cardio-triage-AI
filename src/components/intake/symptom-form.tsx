@@ -43,7 +43,10 @@ interface SymptomFormProps {
     isProcessing: boolean
 }
 
+import { useLanguage } from "@/components/language-provider"
+
 export function SymptomForm({ onSubmit, isProcessing }: SymptomFormProps) {
+    const { t } = useLanguage()
     const commonSymptoms = [
         "Chest Pain", "Shortness of Breath", "Palpitations",
         "Dizziness", "Nausea", "Diaphoresis (Sweating)",
@@ -68,7 +71,7 @@ export function SymptomForm({ onSubmit, isProcessing }: SymptomFormProps) {
     return (
         <Card className="w-full h-full border-none shadow-none bg-transparent">
             <CardHeader className="px-0 pt-0">
-                <CardTitle>Clinical Intake Form</CardTitle>
+                <CardTitle>{t('intake.form')}</CardTitle>
                 <CardDescription>Enter patient reported symptoms and vital signs. Real-time validation active.</CardDescription>
             </CardHeader>
             <CardContent className="px-0">
@@ -80,7 +83,7 @@ export function SymptomForm({ onSubmit, isProcessing }: SymptomFormProps) {
                             name="complaint"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Chief Complaint</FormLabel>
+                                    <FormLabel>{t('chief.complaint')}</FormLabel>
                                     <FormControl>
                                         <Input placeholder="e.g. Severe retrosternal chest pain..." {...field} />
                                     </FormControl>
@@ -198,7 +201,7 @@ export function SymptomForm({ onSubmit, isProcessing }: SymptomFormProps) {
                                     Analyzing Vitals...
                                 </>
                             ) : (
-                                "Run Triage Analysis"
+                                t('run.analysis')
                             )}
                         </Button>
                     </form>

@@ -3,6 +3,7 @@
 import * as React from "react"
 import { Sidebar } from "@/components/sidebar"
 import { ModeToggle } from "@/components/mode-toggle"
+import { LanguageToggle } from "@/components/language-toggle"
 import { FileUploader } from "@/components/intake/file-uploader"
 import { SymptomForm } from "@/components/intake/symptom-form"
 import { ScanningView } from "@/components/analysis/scanning-view"
@@ -30,6 +31,7 @@ export default function Home() {
           </h1>
           <div className="flex items-center gap-4">
             <div className="text-xs text-muted-foreground font-mono">ID: DOC-8821</div>
+            <LanguageToggle />
             <ModeToggle />
           </div>
         </header>
