@@ -8,6 +8,7 @@ import { FileUploader } from "@/components/intake/file-uploader"
 import { SymptomForm } from "@/components/intake/symptom-form"
 import { ScanningView } from "@/components/analysis/scanning-view"
 import { TriageDashboard } from "@/components/dashboard/triage-dashboard"
+import { FirstAidModal } from "@/components/patient/first-aid-modal"
 
 export default function Home() {
   const [view, setView] = React.useState<'intake' | 'analysis' | 'results'>('intake')
@@ -30,6 +31,7 @@ export default function Home() {
             Mission Control
           </h1>
           <div className="flex items-center gap-4">
+            <FirstAidModal />
             <div className="text-xs text-muted-foreground font-mono">ID: DOC-8821</div>
             <LanguageToggle />
             <ModeToggle />
