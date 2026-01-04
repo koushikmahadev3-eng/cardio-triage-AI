@@ -1,109 +1,209 @@
 "use client"
 
 import * as React from "react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import * as z from "zod"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import { Loader2 } from "lucide-react"
+import { Loader2, AlertCircle } from "lucide-react"
+import {
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form"
+
+const formSchema = z.object({
+    complaint: z.string().min(5, {
+        message: "Chief complaint must be at least 5 characters.",
+    }),
+    symptoms: z.array(z.string()).refine((value) => value.length > 0, {
+        message: "Select at least one symptom.",
+    }),
+    hr: z.coerce.number()
+        .min(30, { message: "HR too low (<30)" })
+        .max(300, { message: "HR too high (>300)" }),
+    bp: z.string().regex(/^\d{2,3}\/\d{2,3}$/, {
+        message: "Format must be Systolic/Diastolic (e.g., 120/80)",
+    }),
+    spo2: z.coerce.number()
+        .min(50, { message: "SpO2 too low (<50%)" })
+        .max(100, { message: "SpO2 max is 100%" }),
+})
 
 interface SymptomFormProps {
-    onSubmit: (data: any) => void
+    onSubmit: (data: z.infer<typeof formSchema>) => void
     isProcessing: boolean
 }
 
 export function SymptomForm({ onSubmit, isProcessing }: SymptomFormProps) {
-    const [symptoms, setSymptoms] = React.useState<string[]>([])
-
     const commonSymptoms = [
         "Chest Pain", "Shortness of Breath", "Palpitations",
         "Dizziness", "Nausea", "Diaphoresis (Sweating)",
         "Left Arm Pain", "Jaw Pain"
     ]
 
-    const toggleSymptom = (symptom: string) => {
-        setSymptoms(prev =>
-            prev.includes(symptom)
-                ? prev.filter(s => s !== symptom)
-                : [...prev, symptom]
-        )
-    }
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema) as any,
+        defaultValues: {
+            complaint: "",
+            symptoms: [],
+            hr: 0,
+            bp: "",
+            spo2: 0,
+        },
+    })
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault()
-        // Gather form data - simplified for demo
-        onSubmit({
-            symptoms,
-            timestamp: new Date().toISOString()
-        })
+    function handleSubmit(values: z.infer<typeof formSchema>) {
+        onSubmit(values)
     }
 
     return (
         <Card className="w-full h-full border-none shadow-none bg-transparent">
             <CardHeader className="px-0 pt-0">
                 <CardTitle>Clinical Intake Form</CardTitle>
-                <CardDescription>Enter patient reported symptoms and vital signs if available.</CardDescription>
+                <CardDescription>Enter patient reported symptoms and vital signs. Real-time validation active.</CardDescription>
             </CardHeader>
-            <CardContent className="px-0 space-y-6">
-                <div className="grid gap-2">
-                    <Label htmlFor="complaint">Chief Complaint</Label>
-                    <Input id="complaint" placeholder="e.g. Severe retrosternal chest pain..." />
-                </div>
+            <CardContent className="px-0">
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
 
-                <div className="space-y-3">
-                    <Label>Associated Symptoms</Label>
-                    <div className="grid grid-cols-2 gap-4">
-                        {commonSymptoms.map((s) => (
-                            <div key={s} className="flex items-center space-x-2">
-                                <Checkbox
-                                    id={s}
-                                    checked={symptoms.includes(s)}
-                                    onCheckedChange={() => toggleSymptom(s)}
-                                />
-                                <Label htmlFor={s} className="font-normal text-sm cursor-pointer">{s}</Label>
-                            </div>
-                        ))}
-                    </div>
-                </div>
+                        <FormField
+                            control={form.control}
+                            name="complaint"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Chief Complaint</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="e.g. Severe retrosternal chest pain..." {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
-                <div className="grid grid-cols-3 gap-4">
-                    <div className="grid gap-2">
-                        <Label htmlFor="hr">Heart Rate</Label>
-                        <div className="relative">
-                            <Input id="hr" placeholder="--" className="pr-8" />
-                            <span className="absolute right-3 top-2.5 text-xs text-muted-foreground">bpm</span>
+                        <FormField
+                            control={form.control}
+                            name="symptoms"
+                            render={() => (
+                                <FormItem>
+                                    <div className="mb-4">
+                                        <FormLabel className="text-base">Associated Symptoms</FormLabel>
+                                        <FormDescription>
+                                            Select all that apply.
+                                        </FormDescription>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        {commonSymptoms.map((symptom) => (
+                                            <FormField
+                                                key={symptom}
+                                                control={form.control}
+                                                name="symptoms"
+                                                render={({ field }) => {
+                                                    return (
+                                                        <FormItem
+                                                            key={symptom}
+                                                            className="flex flex-row items-start space-x-3 space-y-0"
+                                                        >
+                                                            <FormControl>
+                                                                <Checkbox
+                                                                    checked={field.value?.includes(symptom)}
+                                                                    onCheckedChange={(checked) => {
+                                                                        return checked
+                                                                            ? field.onChange([...field.value, symptom])
+                                                                            : field.onChange(
+                                                                                field.value?.filter(
+                                                                                    (value) => value !== symptom
+                                                                                )
+                                                                            )
+                                                                    }}
+                                                                />
+                                                            </FormControl>
+                                                            <FormLabel className="font-normal">
+                                                                {symptom}
+                                                            </FormLabel>
+                                                        </FormItem>
+                                                    )
+                                                }}
+                                            />
+                                        ))}
+                                    </div>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <div className="grid grid-cols-3 gap-4">
+                            <FormField
+                                control={form.control}
+                                name="hr"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Heart Rate</FormLabel>
+                                        <FormControl>
+                                            <div className="relative">
+                                                <Input type="number" placeholder="--" {...field} className="pr-8" />
+                                                <span className="absolute right-3 top-2.5 text-xs text-muted-foreground">bpm</span>
+                                            </div>
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="bp"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>BP</FormLabel>
+                                        <FormControl>
+                                            <div className="relative">
+                                                <Input placeholder="120/80" {...field} className="pr-8" />
+                                                <span className="absolute right-3 top-2.5 text-xs text-muted-foreground">mmHg</span>
+                                            </div>
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="spo2"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>SpO2</FormLabel>
+                                        <FormControl>
+                                            <div className="relative">
+                                                <Input type="number" placeholder="--" {...field} className="pr-8" />
+                                                <span className="absolute right-3 top-2.5 text-xs text-muted-foreground">%</span>
+                                            </div>
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                         </div>
-                    </div>
-                    <div className="grid gap-2">
-                        <Label htmlFor="bp">BP</Label>
-                        <div className="relative">
-                            <Input id="bp" placeholder="--/--" className="pr-8" />
-                            <span className="absolute right-3 top-2.5 text-xs text-muted-foreground">mmHg</span>
-                        </div>
-                    </div>
-                    <div className="grid gap-2">
-                        <Label htmlFor="spo2">SpO2</Label>
-                        <div className="relative">
-                            <Input id="spo2" placeholder="--" className="pr-8" />
-                            <span className="absolute right-3 top-2.5 text-xs text-muted-foreground">%</span>
-                        </div>
-                    </div>
-                </div>
+
+                        <Button type="submit" className="w-full" size="lg" disabled={isProcessing}>
+                            {isProcessing ? (
+                                <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Analyzing Vitals...
+                                </>
+                            ) : (
+                                "Run Triage Analysis"
+                            )}
+                        </Button>
+                    </form>
+                </Form>
             </CardContent>
-            <CardFooter className="px-0">
-                <Button className="w-full" size="lg" onClick={handleSubmit} disabled={isProcessing}>
-                    {isProcessing ? (
-                        <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Analyzing Vitals...
-                        </>
-                    ) : (
-                        "Run Triage Analysis"
-                    )}
-                </Button>
-            </CardFooter>
         </Card>
     )
 }
