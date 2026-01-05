@@ -8,6 +8,7 @@ import type { Patient } from "@/lib/mock-data"
 import { cn } from "@/lib/utils"
 import useSWR from 'swr'
 import { useLanguage } from "@/components/language-provider"
+import { motion, AnimatePresence, LayoutGroup } from "framer-motion"
 
 // Fetcher for SWR
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
@@ -16,11 +17,29 @@ export function Sidebar() {
     const { t } = useLanguage()
     // SWR Hook for real-time updates
     const { data: patients, error, isLoading } = useSWR<Patient[]>('/api/patients', fetcher, {
-        refreshInterval: 3000, // Poll every 3 seconds for "Live" feel
+        refreshInterval: 3000,
         revalidateOnFocus: true,
     })
 
     const isConnected = !error && !isLoading
+
+    const sortPatients = (list: Patient[] = []) => {
+        const priority: Record<string, number> = {
+            'critical': 3,
+            'elevated': 2,
+            'stable': 1,
+            'processing': 0,
+            'incoming': 0
+        }
+
+        return [...list].sort((a, b) => {
+            const scoreA = priority[a.status] || 0
+            const scoreB = priority[b.status] || 0
+            return scoreB - scoreA // Descending order
+        })
+    }
+
+    const sortedPatients = React.useMemo(() => sortPatients(patients), [patients])
 
     return (
         <div className="w-80 h-screen border-r bg-sidebar border-sidebar-border fixed left-0 top-0 flex flex-col z-40 shadow-xl">
@@ -65,9 +84,22 @@ export function Sidebar() {
                         </div>
                     )}
 
-                    {patients?.map((patient) => (
-                        <PatientCard key={patient.id} patient={patient} />
-                    ))}
+                    <LayoutGroup>
+                        <AnimatePresence mode="popLayout">
+                            {sortedPatients.map((patient) => (
+                                <motion.div
+                                    key={patient.id}
+                                    layout
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.9 }}
+                                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                >
+                                    <PatientCard patient={patient} />
+                                </motion.div>
+                            ))}
+                        </AnimatePresence>
+                    </LayoutGroup>
                 </div>
             </ScrollArea>
 

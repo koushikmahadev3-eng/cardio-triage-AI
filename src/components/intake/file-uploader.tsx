@@ -15,6 +15,8 @@ export function FileUploader({ onFileSelect }: FileUploaderProps) {
     const { t } = useLanguage()
     const [dragActive, setDragActive] = React.useState(false)
     const [selectedFile, setSelectedFile] = React.useState<File | null>(null)
+    const [isAnalyzing, setIsAnalyzing] = React.useState(false)
+    const [ocrResult, setOcrResult] = React.useState<React.ReactNode | null>(null)
     const inputRef = React.useRef<HTMLInputElement>(null)
 
     const handleDrag = (e: React.DragEvent) => {
@@ -45,19 +47,79 @@ export function FileUploader({ onFileSelect }: FileUploaderProps) {
 
     const handleFile = (file: File) => {
         setSelectedFile(file)
-        onFileSelect(file)
+        setIsAnalyzing(true)
+        setOcrResult(null)
+
+        // Simulate OCR Analysis Delay
+        setTimeout(() => {
+            const mockText = `Patient: John Doe, 58M
+sample_date: 2025-01-04
+Troponin I: 0.85 ng/mL (Ref: <0.04)
+CK-MB: 12.4 ng/mL (Ref: <5.0)
+Potassium: 4.1 mmol/L (Ref: 3.5-5.1)
+ECG Interpretation: ST Elevation in V2-V4.
+Summary: Acute Myocardial Infarction detected.`
+            
+            const highlighted = highlightClinicalMatches(mockText)
+            setOcrResult(highlighted)
+            setIsAnalyzing(false)
+            onFileSelect(file)
+        }, 1500)
+    }
+
+    const highlightClinicalMatches = (text: string) => {
+        return text.split('\n').map((line, i) => {
+            let content: React.ReactNode = line
+
+            // Simple regex checks for demonstration
+            if (line.includes('Troponin')) {
+                const val = parseFloat(line.match(/[\d.]+/)?.[0] || '0')
+                if (val > 0.04) {
+                    content = (
+                        <span className="bg-red-500/20 text-red-500 px-1 rounded font-bold border border-red-500/30">
+                            {line}
+                        </span>
+                    )
+                }
+            } else if (line.includes('CK-MB')) {
+                const val = parseFloat(line.match(/[\d.]+/)?.[0] || '0')
+                if (val > 5.0) {
+                     content = (
+                        <span className="bg-red-500/20 text-red-500 px-1 rounded font-bold border border-red-500/30">
+                            {line}
+                        </span>
+                    )
+                }
+            } else if (line.includes('Potassium')) {
+                 content = (
+                        <span className="bg-green-500/20 text-green-500 px-1 rounded font-bold border border-green-500/30">
+                            {line}
+                        </span>
+                    )
+            } else if (line.includes('ST Elevation')) {
+                content = (
+                        <span className="bg-red-500/20 text-red-500 px-1 rounded font-bold border border-red-500/30 animate-pulse">
+                            {line}
+                        </span>
+                    )
+            }
+
+            return <div key={i} className="text-sm font-mono my-0.5">{content}</div>
+        })
     }
 
     const removeFile = (e: React.MouseEvent) => {
         e.stopPropagation()
         setSelectedFile(null)
+        setOcrResult(null)
+        setIsAnalyzing(false)
         if (inputRef.current) {
             inputRef.current.value = ""
         }
     }
 
     return (
-        <div className="w-full">
+        <div className="w-full space-y-4">
             <div
                 className={cn(
                     "relative h-64 w-full rounded-xl border-2 border-dashed transition-all duration-200 ease-in-out flex flex-col items-center justify-center p-6 text-center cursor-pointer overflow-hidden group",
@@ -135,7 +197,11 @@ export function FileUploader({ onFileSelect }: FileUploaderProps) {
                                 />
                             </div>
                             <div className="text-xs text-green-500 font-medium flex items-center gap-1">
-                                {t('upload.ready')}
+                                {isAnalyzing ? (
+                                    <span className="animate-pulse text-yellow-500">Scanning Document...</span>
+                                ) : (
+                                    t('upload.ready')
+                                )}
                             </div>
                         </motion.div>
                     )}
@@ -151,6 +217,26 @@ export function FileUploader({ onFileSelect }: FileUploaderProps) {
                     </motion.div>
                 )}
             </div>
+            
+            {/* OCR Result Mock Display */}
+            <AnimatePresence>
+                {ocrResult && (
+                    <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="overflow-hidden border rounded-lg bg-card/50"
+                    >
+                        <div className="p-3 border-b text-xs font-bold uppercase text-muted-foreground bg-muted/30 flex items-center justify-between">
+                            <span>Contextual AI Analysis</span>
+                            <span className="text-red-500 animate-pulse">● Attention Needed</span>
+                        </div>
+                        <div className="p-4 bg-black/20">
+                            {ocrResult}
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     )
 }
